@@ -337,8 +337,29 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
     @staticmethod
     def _params_to_dict(d: dict[str, Any]) -> dict[str, Any]:
         """Map GET /parameters → coordinator dict (prefixed param_*)."""
-        return {
+        result = {
             f"param_{key}": d[key]
             for key in _PARAM_KEYS
             if key in d
         }
+        # Decode pled bitmask → 4 individual LED boolean keys.
+        # pled=0: all off | pled=1: Dauerhaft (exclusive) | pled=2–8: n=pled-1, bits 0/1/2
+        if "pled" in d:
+            pled = int(d["pled"]) if d["pled"] is not None else 0
+            if pled == 0:
+                result["param_led_stoerung"]  = False
+                result["param_led_meldung"]   = False
+                result["param_led_durchfluss"] = False
+                result["param_led_dauerhaft"] = False
+            elif pled == 1:
+                result["param_led_stoerung"]  = False
+                result["param_led_meldung"]   = False
+                result["param_led_durchfluss"] = False
+                result["param_led_dauerhaft"] = True
+            else:
+                n = pled - 1
+                result["param_led_stoerung"]  = bool(n & 1)
+                result["param_led_meldung"]   = bool(n & 2)
+                result["param_led_durchfluss"] = bool(n & 4)
+                result["param_led_dauerhaft"] = False
+        return result

@@ -70,7 +70,11 @@
     },
     "switch": {
       "regeneration_mode": {"name": "Manual regeneration mode"},
-      "buzzer":            {"name": "Buzzer"}
+      "buzzer":            {"name": "Buzzer"},
+      "led_stoerung":      {"name": "LED fault"},
+      "led_meldung":       {"name": "LED notice"},
+      "led_durchfluss":    {"name": "LED flow"},
+      "led_dauerhaft":     {"name": "LED permanent"}
     },
     "number": {
       "led_mode":                    {"name": "LED mode"},
