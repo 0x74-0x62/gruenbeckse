@@ -17,7 +17,10 @@
 
 ---
 
-A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21, SE24)** water softeners, connecting via the Grünbeck Cloud API with real-time push updates.
+A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21, SE24)** water softeners.
+
+> [!NOTE]
+> Unlike the SD series, the SE series does not support real-time/push updates via the Grünbeck Cloud API. Consequently, this integration utilizes a polling approach to retrieve data.
 
 ---
 
@@ -152,7 +155,7 @@ Other SE series devices may work but have not been fully tested.
 1. Copy the `custom_components/gruenbeck_se` folder into your HA `config/custom_components/` directory.
 2. Restart Home Assistant.
 3. Go to **Settings → Devices & Services → Add Integration** and search for **Grünbeck SE**.
-4. Enter your Grünbeck Cloud credentials (e-mail and password).
+4. Enter your Grünbeck Cloud credentials (e-mail, password, and desired update interval in seconds).
 
 ---
 

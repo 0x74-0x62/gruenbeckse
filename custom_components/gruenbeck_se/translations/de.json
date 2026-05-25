@@ -5,7 +5,8 @@
         "title": "Grünbeck Cloud Zugangsdaten",
         "data": {
           "username": "E-Mail",
-          "password": "Passwort"
+          "password": "Passwort",
+          "scan_interval": "Abfrageintervall (Sekunden)"
         }
       },
       "select_device": {

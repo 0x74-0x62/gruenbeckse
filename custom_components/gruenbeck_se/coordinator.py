@@ -12,7 +12,7 @@ from yarl import URL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN, SCAN_INTERVAL_MINUTES
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,12 +42,13 @@ class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
         username: str,
         password: str,
         device_id: str,
+        scan_interval: int,
     ) -> None:
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=SCAN_INTERVAL_MINUTES),
+            update_interval=timedelta(seconds=scan_interval),
         )
         self._username = username
         self._password = password
