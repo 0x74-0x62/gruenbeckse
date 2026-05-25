@@ -16,3 +16,4 @@ Thumbs.db
 # Antigravity local folders
 .venv_inspect/*
 scratch/*
+*.code-workspace
