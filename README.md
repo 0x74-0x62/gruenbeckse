@@ -1,9 +1,8 @@
 # Grünbeck softliQ SE Series (SE18/SE21/SE24) — Home Assistant Integration
 
-> **⚠️ Disclaimer**
+> [!NOTE]
 >
-> This is a fork of the [bernd780/gruenbeckse21](https://github.com/bernd780/gruenbeckse21) repository. 
-
+> This is a fork of the [bernd780/gruenbeckse21](https://github.com/bernd780/gruenbeckse21) repository and implements the approach outlined in [gist.github.com/sventiffe](https://gist.github.com/sventiffe/52e5c781ce44c7c76bcb2a5740f13aed).
 
 > **⚠️ Disclaimer**
 >
