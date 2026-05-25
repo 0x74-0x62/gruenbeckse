@@ -9,8 +9,7 @@ from typing import Any
 import aiohttp
 from yarl import URL
 
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP
-from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN, SCAN_INTERVAL_MINUTES
@@ -54,8 +53,6 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._password = password
         self._device_id = device_id
         self.api: Any = None
-        self._unsub_stop: Any = None
-        self._ws_task: asyncio.Task[None] | None = None
 
     # ------------------------------------------------------------------
     # API helpers
@@ -98,13 +95,64 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         }
 
     async def _fetch_update(self) -> dict[str, Any]:
-        """GET /update — SE-native endpoint for all current measurements."""
+        """GET /update — SE-native 5-step sequence for all current measurements."""
         headers = await self._api_headers()
-        result = await self.api._http_request(
-            url=self._api_url("update"),
-            headers=headers,
-            method=aiohttp.hdrs.METH_GET,
-        )
+
+        # 1. POST /realtime/refresh (Wakes up the device)
+        try:
+            await self.api._http_request(
+                url=self._api_url("realtime/refresh"),
+                headers=headers,
+                method=aiohttp.hdrs.METH_POST,
+                json_data={},
+            )
+        except Exception as exc:
+            _LOGGER.debug("realtime/refresh failed: %s", exc)
+
+        # 2. POST /realtime/enter (Enters real-time session)
+        try:
+            await self.api._http_request(
+                url=self._api_url("realtime/enter"),
+                headers=headers,
+                method=aiohttp.hdrs.METH_POST,
+                json_data={},
+            )
+        except Exception as exc:
+            _LOGGER.debug("realtime/enter failed: %s", exc)
+
+        # 3. GET /update (Retrieves latest measurements)
+        result = None
+        try:
+            result = await self.api._http_request(
+                url=self._api_url("update"),
+                headers=headers,
+                method=aiohttp.hdrs.METH_GET,
+            )
+        except Exception as exc:
+            _LOGGER.error("update fetch failed: %s", exc)
+
+        # 4. POST /realtime/leave (Leaves real-time session)
+        try:
+            await self.api._http_request(
+                url=self._api_url("realtime/leave"),
+                headers=headers,
+                method=aiohttp.hdrs.METH_POST,
+                json_data={},
+            )
+        except Exception as exc:
+            _LOGGER.debug("realtime/leave failed: %s", exc)
+
+        # 5. POST /realtime/off (Puts device back to sleep)
+        try:
+            await self.api._http_request(
+                url=self._api_url("realtime/off"),
+                headers=headers,
+                method=aiohttp.hdrs.METH_POST,
+                json_data={},
+            )
+        except Exception as exc:
+            _LOGGER.debug("realtime/off failed: %s", exc)
+
         if not isinstance(result, dict):
             raise UpdateFailed(f"Unexpected /update response type: {type(result)}")
         return result
@@ -129,55 +177,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         return result if isinstance(result, dict) else {}
 
-    # ------------------------------------------------------------------
-    # WebSocket / SignalR
-    # ------------------------------------------------------------------
 
-    async def _listen_websocket(self) -> None:
-        """Background task: connect and block on the SignalR message loop."""
-        try:
-            await self.api.connect()
-        except Exception as exc:
-            _LOGGER.warning("SignalR connect failed: %s", exc)
-            return
-
-        async def _on_ha_stop(_: Event) -> None:
-            self._unsub_stop = None
-            await self.api.disconnect()
-
-        self._unsub_stop = self.hass.bus.async_listen_once(
-            EVENT_HOMEASSISTANT_STOP, _on_ha_stop
-        )
-
-        try:
-            await self.api.listen(callback=self._on_ws_update)
-        except Exception as exc:
-            _LOGGER.debug("SignalR listen ended: %s", exc)
-        finally:
-            await self.api.disconnect()
-            # Workaround for upstream pygruenbeck_cloud reuse-after-close bug
-            if hasattr(self.api, "_ws_session"):
-                self.api._ws_session = None
-            if hasattr(self.api, "_ws_client"):
-                self.api._ws_client = None
-            if self._unsub_stop:
-                self._unsub_stop()
-                self._unsub_stop = None
-
-    @callback
-    def _on_ws_update(self, device: Any) -> None:
-        """SignalR push received — refresh measurement data only."""
-        self.hass.async_create_task(self._fetch_and_notify())
-
-    async def _fetch_and_notify(self) -> None:
-        try:
-            raw = await self._fetch_update()
-            # Merge measurement update into existing data to preserve info/params.
-            merged = dict(self.data) if self.data else {}
-            merged.update(self._update_to_dict(raw))
-            self.async_set_updated_data(merged)
-        except Exception as exc:
-            _LOGGER.debug("Post-WebSocket /update fetch failed: %s", exc)
 
     # ------------------------------------------------------------------
     # Periodic update
@@ -187,12 +187,6 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         try:
             if self.api is None:
                 await self._init_api()
-
-            if not self.api.connected and self._unsub_stop is None:
-                self._ws_task = self.hass.async_create_background_task(
-                    self._listen_websocket(),
-                    "gruenbeck_se21_ws",
-                )
 
             raw_update = await self._fetch_update()
             _LOGGER.debug(
@@ -228,17 +222,11 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def async_shutdown(self) -> None:
         """Cancel any active tasks or connections when shutting down."""
-        if self._ws_task:
-            self._ws_task.cancel()
-            self._ws_task = None
-        if self._unsub_stop:
-            self._unsub_stop()
-            self._unsub_stop = None
-        if self.api and self.api.connected:
+        if self.api:
             try:
-                await self.api.disconnect()
+                await self.api.close()
             except Exception as exc:
-                _LOGGER.debug("Error disconnecting during shutdown: %s", exc)
+                _LOGGER.debug("Error closing Grünbeck API during shutdown: %s", exc)
         await super().async_shutdown()
 
     # ------------------------------------------------------------------
