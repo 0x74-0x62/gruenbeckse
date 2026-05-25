@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Any
+
+import homeassistant.util.dt as dt_util
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -33,6 +36,24 @@ def _clean_temperature(val: Any) -> float | None:
         return None if v < 0 else v
     except (TypeError, ValueError):
         return None
+
+
+def _parse_timestamp(val: Any) -> datetime | None:
+    """Parse ISO timestamp and make it timezone-aware."""
+    if not val:
+        return None
+    dt = dt_util.parse_datetime(str(val))
+    if dt is None:
+        return None
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
+_MODE_MAP = {
+    1: "Eco",
+    2: "Comfort",
+    3: "Power",
+    4: "Individual",
+}
 
 
 SENSORS: tuple[SESensorDescription, ...] = (
@@ -124,9 +145,9 @@ SENSORS: tuple[SESensorDescription, ...] = (
         suggested_display_precision=1,
     ),
     SESensorDescription(
-        key="actual_value_soft_water_hardness",
-        translation_key="actual_value_soft_water_hardness",
-        native_unit_of_measurement="°dH",
+        key="raw_water_hardness_fh",
+        translation_key="raw_water_hardness_fh",
+        native_unit_of_measurement="°fH",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water",
     ),
@@ -226,6 +247,19 @@ SENSORS: tuple[SESensorDescription, ...] = (
         translation_key="active_error_code",
         icon="mdi:alert-circle-outline",
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    SESensorDescription(
+        key="next_regeneration",
+        translation_key="next_regeneration",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        icon="mdi:clock-outline",
+        value_fn=_parse_timestamp,
+    ),
+    SESensorDescription(
+        key="param_pmode",
+        translation_key="operation_mode",
+        icon="mdi:cog",
+        value_fn=lambda v: _MODE_MAP.get(v, f"Unknown ({v})") if v is not None else None,
     ),
 )
 

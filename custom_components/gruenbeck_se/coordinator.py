@@ -22,6 +22,7 @@ _PARAM_KEYS = (
     "pregmode", "pbuzzer",
     "pled", "pledbright",
     "psetsoft", "prawhard",
+    "pmode",
     "pregsu1", "pregsu2", "pregsu3",
     "pregmo1", "pregmo2", "pregmo3",
     "pregdi1", "pregdi2", "pregdi3",
@@ -307,7 +308,7 @@ class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "regeneration_percentage_2":        d.get("mregpercent2"),
             "regeneration_trigger":             d.get("iregtrig"),
             # Water quality
-            "actual_value_soft_water_hardness": d.get("mlime"),
+            "raw_water_hardness_fh":            d.get("mlime"),
         }
 
     @staticmethod
@@ -331,6 +332,7 @@ class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "device_status":        d.get("estatus"),
             "installed_on":         d.get("installedOn"),
             "next_regen_calc":      d.get("calcRegMo1"),
+            "next_regeneration":    d.get("regMo1"),
             # errorCode 26 = "Salzvorrat gering"
             "low_salt":             any(e["code"] == 26 for e in active),
             "active_errors":        active,
