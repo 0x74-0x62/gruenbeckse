@@ -12,3 +12,7 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Antigravity local folders
+.venv_inspect/*
+scratch/*
