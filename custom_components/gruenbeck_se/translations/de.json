@@ -25,6 +25,16 @@
       "already_configured": "Dieses Gerät ist bereits eingerichtet"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Abfrageintervall konfigurieren",
+        "data": {
+          "scan_interval": "Abfrageintervall (Sekunden)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "soft_water_quantity":              {"name": "Weichwasser gesamt"},

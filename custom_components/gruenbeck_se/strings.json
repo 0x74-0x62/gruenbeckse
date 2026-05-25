@@ -25,6 +25,16 @@
       "already_configured": "This device is already configured"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure update interval",
+        "data": {
+          "scan_interval": "Update interval (seconds)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "soft_water_quantity":              {"name": "Soft water total"},

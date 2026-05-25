@@ -157,6 +157,9 @@ Other SE series devices may work but have not been fully tested.
 3. Go to **Settings → Devices & Services → Add Integration** and search for **Grünbeck SE**.
 4. Enter your Grünbeck Cloud credentials (e-mail, password, and desired update interval in seconds).
 
+> [!TIP]
+> You can also adjust this update interval at any time after installation without reinstalling. Simply go to **Settings → Devices & Services**, locate the **Grünbeck SE** integration card, and click **Configure**.
+
 ---
 
 ## Credits
