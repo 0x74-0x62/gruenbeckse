@@ -54,7 +54,7 @@ class GruenbeckSELowSaltSensor(GruenbeckSEEntity, BinarySensorEntity):
     _attr_device_class = BinarySensorDeviceClass.PROBLEM
     _attr_icon = "mdi:shaker-outline"
 
-    def __init__(self, coordinator: GruenbeckSE21Coordinator, entry: ConfigEntry) -> None:
+    def __init__(self, coordinator: GruenbeckSECoordinator, entry: ConfigEntry) -> None:
         super().__init__(coordinator, entry, "low_salt")
 
     @property

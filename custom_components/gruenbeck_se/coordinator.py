@@ -1,7 +1,6 @@
 """DataUpdateCoordinator for Grünbeck softliQ SE."""
 from __future__ import annotations
 
-import asyncio
 import logging
 from datetime import timedelta
 from typing import Any
@@ -309,12 +308,6 @@ class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "regeneration_trigger":             d.get("iregtrig"),
             # Water quality
             "actual_value_soft_water_hardness": d.get("mlime"),
-            # Not available from /update — show unavailable in HA
-            "exhausted_percentage":             None,
-            "flow_rate_peak_value":             None,
-            "last_regeneration_exchanger":      None,
-            "regeneration_remaining_time":      None,
-            "next_service":                     None,
         }
 
     @staticmethod

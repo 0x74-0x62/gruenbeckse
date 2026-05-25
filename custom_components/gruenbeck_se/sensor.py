@@ -141,29 +141,12 @@ SENSORS: tuple[SESensorDescription, ...] = (
         value_fn=_clean_temperature,
     ),
     SESensorDescription(
-        key="flow_rate_peak_value",
-        translation_key="flow_rate_peak_value",
-        native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
-        device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
-        state_class=SensorStateClass.MEASUREMENT,
-        suggested_display_precision=2,
-        entity_registry_enabled_default=False,  # not in /update endpoint
-    ),
-    SESensorDescription(
         key="make_up_water_volume",
         translation_key="make_up_water_volume",
         native_unit_of_measurement=UnitOfVolume.LITERS,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water-plus",
         suggested_display_precision=0,
-    ),
-    SESensorDescription(
-        key="exhausted_percentage",
-        translation_key="exhausted_percentage",
-        native_unit_of_measurement="%",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:battery-low",
-        entity_registry_enabled_default=False,  # not in /update endpoint
     ),
     SESensorDescription(
         key="regeneration_step",
@@ -200,31 +183,11 @@ SENSORS: tuple[SESensorDescription, ...] = (
         entity_registry_enabled_default=False,
     ),
     SESensorDescription(
-        key="last_regeneration_exchanger",
-        translation_key="last_regeneration_exchanger",
-        icon="mdi:clock-outline",
-        entity_registry_enabled_default=False,  # not in /update endpoint
-    ),
-    SESensorDescription(
         key="capacity_figure",
         translation_key="capacity_figure",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:gauge",
         suggested_display_precision=1,
-    ),
-    SESensorDescription(
-        key="regeneration_remaining_time",
-        translation_key="regeneration_remaining_time",
-        native_unit_of_measurement="min",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:timer-outline",
-        entity_registry_enabled_default=False,  # not in /update endpoint
-    ),
-    SESensorDescription(
-        key="next_service",
-        translation_key="next_service",
-        icon="mdi:wrench-clock",
-        entity_registry_enabled_default=False,  # not in /update endpoint
     ),
     SESensorDescription(
         key="remaining_amount_of_water",
