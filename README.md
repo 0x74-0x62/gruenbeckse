@@ -1,17 +1,12 @@
 # Grünbeck softliQ SE Series (SE18/SE21/SE24) — Home Assistant Integration
 
+A custom Home Assistant integration for the **Grünbeck softliQ SE series** water softeners.
+
 > [!NOTE]
->
-> This is a fork of the [bernd780/gruenbeckse21](https://github.com/bernd780/gruenbeckse21) repository and implements the approach outlined in [gist.github.com/sventiffe](https://gist.github.com/sventiffe/52e5c781ce44c7c76bcb2a5740f13aed).
-
----
-
-A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21, SE24)** water softeners.
+> This is a fork of the [bernd780/gruenbeckse21](https://github.com/bernd780/gruenbeckse21) repository and implements the polling approach outlined in [gist.github.com/sventiffe](https://gist.github.com/sventiffe/52e5c781ce44c7c76bcb2a5740f13aed).
 
 > [!NOTE]
 > Unlike the SD series, the SE series does not support real-time/push updates via the Grünbeck Cloud API. Consequently, this integration utilizes a polling approach to retrieve data.
-
----
 
 ## Differences from hagruenbeck_cloud
 
@@ -72,10 +67,8 @@ Rather than mapping SE data through the library's SD-oriented model, this integr
 ## Supported devices
 
 - Grünbeck **softliQ SE18**
-- Grünbeck **softliQ SE21**
-- Grünbeck **softliQ SE24**
 
-Other SE series devices may work but have not been fully tested.
+Other SE series devices may work but have not been tested.
 
 ---
 
@@ -155,3 +148,4 @@ Other SE series devices may work but have not been fully tested.
 
 - [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) by [@p0l0](https://github.com/p0l0) — SD series integration, used as reference
 - [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud) by [@p0l0](https://github.com/p0l0) — Python library for authentication and SignalR
+- [sventiffe's Gist](https://gist.github.com/sventiffe/52e5c781ce44c7c76bcb2a5740f13aed) — blueprint for implementing the polling approach
