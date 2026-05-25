@@ -58,7 +58,6 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
-        entity_registry_enabled_default=False,  # SE21 has no flow meter, always 0
     ),
     SE21SensorDescription(
         key="current_flow_rate_2",
