@@ -26,6 +26,15 @@ class SE21SensorDescription(SensorEntityDescription):
     value_fn: Any = None
 
 
+def _clean_temperature(val: Any) -> float | None:
+    """Clean temperature value and discard negative sentinel values."""
+    try:
+        v = float(val)
+        return None if v < 0 else v
+    except (TypeError, ValueError):
+        return None
+
+
 SENSORS: tuple[SE21SensorDescription, ...] = (
     # ── Measurements from /update ──────────────────────────────────────
     SE21SensorDescription(
@@ -129,6 +138,8 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=1,
+        entity_registry_enabled_default=False,  # SE18/SE21 lack physical sensor, reports negative sentinel
+        value_fn=_clean_temperature,
     ),
     SE21SensorDescription(
         key="flow_rate_peak_value",
