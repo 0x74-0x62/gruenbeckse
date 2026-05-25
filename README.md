@@ -4,16 +4,6 @@
 >
 > This is a fork of the [bernd780/gruenbeckse21](https://github.com/bernd780/gruenbeckse21) repository and implements the approach outlined in [gist.github.com/sventiffe](https://gist.github.com/sventiffe/52e5c781ce44c7c76bcb2a5740f13aed).
 
-> **⚠️ Disclaimer**
->
-> This integration was created by a hobbyist, not a professional software developer.
-> It is provided **as-is, without any warranty or guarantee** of correctness, stability, or fitness for any purpose.
-> **No support can be offered.**
->
-> The author hopes that the SE series support implemented here finds its way into the original projects
-> [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) and/or [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud),
-> where it would receive proper maintenance. Pull requests to those repositories are very welcome.
-
 ---
 
 A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21, SE24)** water softeners.
