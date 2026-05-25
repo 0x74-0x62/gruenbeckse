@@ -1,4 +1,4 @@
-# Grünbeck softliQ SE21 — Home Assistant Integration
+# Grünbeck softliQ SE18/SE21 — Home Assistant Integration
 
 > **⚠️ Disclaimer**
 >
@@ -12,13 +12,13 @@
 
 ---
 
-A custom Home Assistant integration for the **Grünbeck softliQ SE21** water softener, connecting via the Grünbeck Cloud API with real-time SignalR push updates.
+A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21)** water softeners, connecting via the Grünbeck Cloud API with real-time SignalR push updates.
 
 ---
 
 ## Differences from hagruenbeck_cloud
 
-This integration was built from scratch to support the **SE series** (softliQ SE21). It uses [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) and [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud) by [@p0l0](https://github.com/p0l0) as a reference and reuses the `pygruenbeck_cloud` library for authentication and SignalR — but diverges significantly in the following areas:
+This integration was built from scratch to support the **SE series** (softliQ SE18/SE21). It uses [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) and [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud) by [@p0l0](https://github.com/p0l0) as a reference and reuses the `pygruenbeck_cloud` library for authentication and SignalR — but diverges significantly in the following areas:
 
 ### 1. Target device: SE series vs. SD series
 
@@ -58,13 +58,13 @@ Note: `msaltrange` in `/update` does **not** reliably reflect the salt warning s
 
 ### 6. Temperature sensor
 
-The SE21 reports water temperature as `mtemp` in the `/update` response. This is not available in the SD series and has no equivalent in `hagruenbeck_cloud`.
+The SE series API reports water temperature as `mtemp` in the `/update` response (which is not available in the SD series). However, the physical temperature sensor is only present on the larger **softliQ:SE24** model, not on the SE18 and SE21. If the sensor is not physically installed, the API returns a negative sentinel value (e.g., `-9`). This integration automatically filters out negative temperatures and disables the temperature sensor entity by default (it can be manually enabled for SE24 devices).
 
-### 7. Single-chamber device
+### 7. Single-chamber device / Exchanger 2
 
-The SE21 is a single-chamber device. Fields for exchanger 2 (`mRescapa2`, `mresidcap2`, `mstep2`, `mregpercent2`, `mflowreg2`) exist in the API response but are always 0. Corresponding entities are created but **disabled by default**.
+The SE18 and SE21 are single-chamber devices. Fields for exchanger 2 (`mRescapa2`, `mresidcap2`, `mstep2`, `mregpercent2`, `mflowreg2`) exist in the API response but are always 0. Corresponding entities are created but **disabled by default**.
 
-Similarly, the SE21 has no physical flow meter — `mflow1` is always 0. The flow rate sensor exists but is disabled by default.
+The SE series uses an internal turbine-based water meter/pulse generator to track consumption and calculate real-time flow rate (`mflow1`). The **Durchfluss** (flow rate) sensor is enabled by default to show live flow rate updates pushed dynamically via WebSockets when water is running.
 
 ### 8. Direct REST calls instead of library abstraction
 
@@ -72,11 +72,12 @@ Rather than mapping SE data through the library's SD-oriented model, this integr
 
 ---
 
-## Supported device
+## Supported devices
 
+- Grünbeck **softliQ SE18**
 - Grünbeck **softliQ SE21**
 
-Other SE series devices may work but have not been tested.
+Other SE series devices (like the SE24 or SE26) may work but have not been fully tested.
 
 ---
 
@@ -93,10 +94,21 @@ Other SE series devices may work but have not been tested.
 | Salzverbrauch | `msaltusage` | Salt consumption (kg) |
 | Salzreichweite | `msaltrange` | Salt level status (ok/low) |
 | Wasserhärte | `mlime` | Soft water hardness (°dH) |
-| Temperatur | `mtemp` | Water temperature (°C) |
+| Durchfluss | `mflow1` | Current flow rate (m³/h) |
 | Nachfüllwasser | `mcountwatertank` | Make-up water volume (L) |
 | Kapazitätswert | `mcapacity` | Capacity figure |
 | Nächste Regeneration | `calcRegMo1` | Next scheduled regeneration time |
+
+### Sensors (disabled by default)
+| Entity | Source field | Description |
+|---|---|---|
+| Temperatur | `mtemp` | Water temperature (°C) — only on SE24 |
+| Durchfluss 2 | `mflow2` | Flow rate exchanger 2 (m³/h) — only on double-chamber models |
+| Verbleibende Kapazität 2 | `mRescapa2` | Remaining capacity exchanger 2 (L) — only on double-chamber models |
+| Kapazität 2 | `mresidcap2` | Remaining capacity exchanger 2 (%) — only on double-chamber models |
+| Regenerationsschritt 2 | `mstep2` | Regeneration status exchanger 2 — only on double-chamber models |
+| Regeneration % 2 | `mregpercent2` | Regeneration percentage exchanger 2 — only on double-chamber models |
+| Regenerationsdurchfluss 2 | `mflowreg2` | Regeneration flow rate exchanger 2 — only on double-chamber models |
 
 ### Binary Sensors (enabled by default)
 | Entity | Description |
@@ -125,7 +137,7 @@ Other SE series devices may work but have not been tested.
 
 - Home Assistant 2023.x or newer
 - `pygruenbeck_cloud==1.3.3`
-- A Grünbeck Cloud account with an SE21 device registered
+- A Grünbeck Cloud account with an SE18 or SE21 device registered
 
 ---
 
