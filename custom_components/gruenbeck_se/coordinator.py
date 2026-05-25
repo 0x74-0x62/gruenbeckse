@@ -332,7 +332,7 @@ class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "device_status":        d.get("estatus"),
             "installed_on":         d.get("installedOn"),
             "next_regen_calc":      d.get("calcRegMo1"),
-            "next_regeneration":    d.get("regMo1"),
+            "planned_next_regeneration": d.get("regMo1"),
             # errorCode 26 = "Salzvorrat gering"
             "low_salt":             any(e["code"] == 26 for e in active),
             "active_errors":        active,

@@ -60,11 +60,12 @@
       "remaining_amount_of_water":        {"name": "Verbleibendes Wasser"},
       "device_status":                    {"name": "Gerätestatus"},
       "installed_on":                     {"name": "Installiert am"},
-      "next_regen_calc":                  {"name": "Nächste Regeneration (Uhrzeit)"},
-      "next_regeneration":                {"name": "Nächste Regeneration"},
+      "planned_next_regeneration":        {"name": "Geplante nächste Regeneration"},
       "operation_mode":                   {"name": "Betriebsmodus"},
       "active_error_message":             {"name": "Aktuelle Fehlermeldung"},
-      "active_error_code":                {"name": "Aktueller Fehlercode"}
+      "active_error_code":                {"name": "Aktueller Fehlercode"},
+      "target_soft_water_hardness":       {"name": "Weichwasser-Sollwert"},
+      "raw_water_hardness":               {"name": "Rohwasserhärte"}
     },
     "binary_sensor": {
       "has_error": {"name": "Gerätestörung"},

@@ -85,11 +85,12 @@ Other SE series devices may work but have not been tested.
 | Salzverbrauch | `msaltusage` | Salt consumption (kg) |
 | Salzreichweite | `msaltrange` | Salt level status (ok/low) |
 | Rohwasserhärte (fH) | `mlime` | Raw water hardness (°fH) |
+| Weichwasser-Sollwert | `psetsoft` | Target softened water hardness (°dH) |
+| Rohwasserhärte | `prawhard` | Raw water hardness (°dH) |
 | Durchfluss | `mflow1` | Current flow rate (m³/h) |
 | Nachfüllwasser | `mcountwatertank` | Make-up water volume (L) |
 | Kapazitätswert | `mcapacity` | Capacity figure |
-| Nächste Regeneration (Uhrzeit) | `calcRegMo1` | Scheduled regeneration time (HH:MM) |
-| Nächste Regeneration | `regMo1` | Next scheduled regeneration datetime |
+| Geplante nächste Regeneration | `regMo1` & `calcRegMo1` | Planned next regeneration date and time (combined) |
 | Betriebsmodus | `pmode` | Current operating mode (Eco, Comfort, Power, Individual) |
 
 ### Sensors (disabled by default)
