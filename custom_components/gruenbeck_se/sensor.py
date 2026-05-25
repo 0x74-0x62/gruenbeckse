@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, time, timezone
+from datetime import datetime, timezone
 from typing import Any
 
 import homeassistant.util.dt as dt_util
@@ -46,37 +46,6 @@ def _parse_timestamp(val: Any) -> datetime | None:
     if dt is None:
         return None
     return dt if dt.tzinfo else dt.replace(tzinfo=dt_util.DEFAULT_TIME_ZONE)
-
-
-def _parse_regeneration_timestamp(coordinator_data: dict[str, Any]) -> datetime | None:
-    """Combine planned_next_regeneration date and next_regen_calc time into localized datetime."""
-    reg_date_str = coordinator_data.get("planned_next_regeneration")  # e.g., "2026-05-25T02:00:00"
-    reg_time_str = coordinator_data.get("next_regen_calc")   # e.g., "18:00"
-
-    if not reg_date_str:
-        return None
-
-    try:
-        # Parse the date portion from the ISO string
-        date_part = datetime.fromisoformat(reg_date_str).date()
-
-        # Parse the time portion (defaulting to 02:00 if not available or invalid)
-        time_part = time(2, 0)
-        if reg_time_str and ":" in reg_time_str:
-            parts = reg_time_str.split(":")
-            time_part = time(int(parts[0]), int(parts[1]))
-
-        # Combine date and time
-        naive_dt = datetime.combine(date_part, time_part)
-
-        # Localize to Home Assistant's configured local timezone
-        return naive_dt.replace(tzinfo=dt_util.DEFAULT_TIME_ZONE)
-    except Exception:
-        # Fallback to parsing planned_next_regeneration directly if combination fails
-        dt = dt_util.parse_datetime(str(reg_date_str))
-        if dt:
-            return dt if dt.tzinfo else dt.replace(tzinfo=dt_util.DEFAULT_TIME_ZONE)
-        return None
 
 
 _MODE_MAP = {
@@ -275,10 +244,16 @@ SENSORS: tuple[SESensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SESensorDescription(
+        key="next_regen_calc",
+        translation_key="next_regen_calc",
+        icon="mdi:clock-outline",
+    ),
+    SESensorDescription(
         key="planned_next_regeneration",
         translation_key="planned_next_regeneration",
         device_class=SensorDeviceClass.TIMESTAMP,
         icon="mdi:clock-outline",
+        value_fn=_parse_timestamp,
     ),
     SESensorDescription(
         key="param_pmode",
@@ -330,8 +305,6 @@ class GruenbeckSESensor(GruenbeckSEEntity, SensorEntity):
 
     @property
     def native_value(self) -> Any:
-        if self.entity_description.key == "planned_next_regeneration":
-            return _parse_regeneration_timestamp(self.coordinator.data or {})
         raw = (self.coordinator.data or {}).get(self.entity_description.key)
         if raw is None:
             return None

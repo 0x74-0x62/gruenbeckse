@@ -90,7 +90,8 @@ Other SE series devices may work but have not been tested.
 | Durchfluss | `mflow1` | Current flow rate (m³/h) |
 | Nachfüllwasser | `mcountwatertank` | Make-up water volume (L) |
 | Kapazitätswert | `mcapacity` | Capacity figure |
-| Geplante nächste Regeneration | `regMo1` & `calcRegMo1` | Planned next regeneration date and time (combined) |
+| Geplante nächste Regeneration (Uhrzeit) | `calcRegMo1` | Planned next regeneration time slot (HH:MM) |
+| Geplante nächste Regeneration | `regMo1` | Planned next regeneration date/time (with static time) |
 | Betriebsmodus | `pmode` | Current operating mode (Eco, Comfort, Power, Individual) |
 
 ### Sensors (disabled by default)
