@@ -1,4 +1,4 @@
-"""Switch platform for Grünbeck softliQ SE21 — writable boolean parameters."""
+"""Switch platform for Grünbeck softliQ SE — writable boolean parameters."""
 from __future__ import annotations
 
 import logging
@@ -11,27 +11,27 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
-from .entity import GruenbeckSE21Entity
+from .coordinator import GruenbeckSECoordinator
+from .entity import GruenbeckSEEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class SE21SwitchDescription(SwitchEntityDescription):
+class SESwitchDescription(SwitchEntityDescription):
     """Switch description with the raw parameter key for PATCH."""
     param_key: str = ""
 
 
-SWITCHES: tuple[SE21SwitchDescription, ...] = (
-    SE21SwitchDescription(
+SWITCHES: tuple[SESwitchDescription, ...] = (
+    SESwitchDescription(
         key="param_pregmode",
         translation_key="regeneration_mode",
         icon="mdi:refresh-auto",
         param_key="pregmode",
         entity_registry_enabled_default=False,
     ),
-    SE21SwitchDescription(
+    SESwitchDescription(
         key="param_pbuzzer",
         translation_key="buzzer",
         icon="mdi:bell",
@@ -42,35 +42,35 @@ SWITCHES: tuple[SE21SwitchDescription, ...] = (
 
 
 @dataclass(frozen=True)
-class SE21LedSwitchDescription(SwitchEntityDescription):
+class SELedSwitchDescription(SwitchEntityDescription):
     """Switch description for a single LED bit derived from the pled bitmask."""
     data_key: str = ""          # coordinator data key (param_led_*)
     is_dauerhaft: bool = False  # True only for the "Dauerhaft" bit
 
 
-LED_SWITCHES: tuple[SE21LedSwitchDescription, ...] = (
-    SE21LedSwitchDescription(
+LED_SWITCHES: tuple[SELedSwitchDescription, ...] = (
+    SELedSwitchDescription(
         key="led_stoerung",
         translation_key="led_stoerung",
         icon="mdi:alert-circle",
         data_key="param_led_stoerung",
         entity_registry_enabled_default=False,
     ),
-    SE21LedSwitchDescription(
+    SELedSwitchDescription(
         key="led_meldung",
         translation_key="led_meldung",
         icon="mdi:message-badge",
         data_key="param_led_meldung",
         entity_registry_enabled_default=False,
     ),
-    SE21LedSwitchDescription(
+    SELedSwitchDescription(
         key="led_durchfluss",
         translation_key="led_durchfluss",
         icon="mdi:waves",
         data_key="param_led_durchfluss",
         entity_registry_enabled_default=False,
     ),
-    SE21LedSwitchDescription(
+    SELedSwitchDescription(
         key="led_dauerhaft",
         translation_key="led_dauerhaft",
         icon="mdi:led-on",
@@ -86,26 +86,26 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: GruenbeckSE21Coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GruenbeckSECoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[SwitchEntity] = [
-        GruenbeckSE21Switch(coordinator, entry, desc) for desc in SWITCHES
+        GruenbeckSESwitch(coordinator, entry, desc) for desc in SWITCHES
     ]
     entities += [
-        GruenbeckSE21LedSwitch(coordinator, entry, desc) for desc in LED_SWITCHES
+        GruenbeckSELedSwitch(coordinator, entry, desc) for desc in LED_SWITCHES
     ]
     async_add_entities(entities)
 
 
-class GruenbeckSE21Switch(GruenbeckSE21Entity, SwitchEntity):
+class GruenbeckSESwitch(GruenbeckSEEntity, SwitchEntity):
     """A writable boolean parameter as a switch entity."""
 
-    entity_description: SE21SwitchDescription
+    entity_description: SESwitchDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21SwitchDescription,
+        description: SESwitchDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description
@@ -138,16 +138,16 @@ class GruenbeckSE21Switch(GruenbeckSE21Entity, SwitchEntity):
             ) from exc
 
 
-class GruenbeckSE21LedSwitch(GruenbeckSE21Entity, SwitchEntity):
+class GruenbeckSELedSwitch(GruenbeckSEEntity, SwitchEntity):
     """One of the four LED mode bits, derived from and writing back to pled."""
 
-    entity_description: SE21LedSwitchDescription
+    entity_description: SELedSwitchDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21LedSwitchDescription,
+        description: SELedSwitchDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description

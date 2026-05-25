@@ -1,4 +1,4 @@
-"""Time platform for Grünbeck softliQ SE21 — regeneration schedule times."""
+"""Time platform for Grünbeck softliQ SE — regeneration schedule times."""
 from __future__ import annotations
 
 import logging
@@ -13,8 +13,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
-from .entity import GruenbeckSE21Entity
+from .coordinator import GruenbeckSECoordinator
+from .entity import GruenbeckSEEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,13 +32,13 @@ _DAYS = (
 
 
 @dataclass(frozen=True)
-class SE21TimeDescription(TimeEntityDescription):
+class SETimeDescription(TimeEntityDescription):
     """Time description with the raw parameter key for PATCH."""
     param_key: str = ""
 
 
-TIMES: tuple[SE21TimeDescription, ...] = tuple(
-    SE21TimeDescription(
+TIMES: tuple[SETimeDescription, ...] = tuple(
+    SETimeDescription(
         key=f"param_{day_param}{slot}",
         translation_key=f"regen_time_{day_abbr}_{slot}",
         icon="mdi:clock-outline",
@@ -55,22 +55,22 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: GruenbeckSE21Coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GruenbeckSECoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
-        GruenbeckSE21Time(coordinator, entry, desc) for desc in TIMES
+        GruenbeckSETime(coordinator, entry, desc) for desc in TIMES
     )
 
 
-class GruenbeckSE21Time(GruenbeckSE21Entity, TimeEntity):
+class GruenbeckSETime(GruenbeckSEEntity, TimeEntity):
     """A regeneration schedule time slot as a time entity."""
 
-    entity_description: SE21TimeDescription
+    entity_description: SETimeDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21TimeDescription,
+        description: SETimeDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description

@@ -1,4 +1,4 @@
-"""Grünbeck softliQ SE21 integration."""
+"""Grünbeck softliQ SE integration."""
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -6,7 +6,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_DEVICE_ID, DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
+from .coordinator import GruenbeckSECoordinator
 
 PLATFORMS = [
     Platform.SENSOR,
@@ -19,7 +19,7 @@ PLATFORMS = [
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    coordinator = GruenbeckSE21Coordinator(
+    coordinator = GruenbeckSECoordinator(
         hass,
         username=entry.data[CONF_USERNAME],
         password=entry.data[CONF_PASSWORD],

@@ -1,4 +1,4 @@
-"""Number platform for Grünbeck softliQ SE21 — writable numeric parameters."""
+"""Number platform for Grünbeck softliQ SE — writable numeric parameters."""
 from __future__ import annotations
 
 import logging
@@ -15,21 +15,21 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
-from .entity import GruenbeckSE21Entity
+from .coordinator import GruenbeckSECoordinator
+from .entity import GruenbeckSEEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class SE21NumberDescription(NumberEntityDescription):
+class SENumberDescription(NumberEntityDescription):
     """Number description with the raw parameter key for PATCH."""
     param_key: str = ""
     as_string: bool = False  # True when the API expects a string value (e.g. pledbright)
 
 
-NUMBERS: tuple[SE21NumberDescription, ...] = (
-    SE21NumberDescription(
+NUMBERS: tuple[SENumberDescription, ...] = (
+    SENumberDescription(
         key="param_pled",
         translation_key="led_mode",
         icon="mdi:led-variant-on",
@@ -40,7 +40,7 @@ NUMBERS: tuple[SE21NumberDescription, ...] = (
         mode=NumberMode.SLIDER,
         entity_registry_enabled_default=False,
     ),
-    SE21NumberDescription(
+    SENumberDescription(
         key="param_pledbright",
         translation_key="led_brightness",
         icon="mdi:brightness-6",
@@ -53,7 +53,7 @@ NUMBERS: tuple[SE21NumberDescription, ...] = (
         as_string=True,  # API expects string ("39", "41", …)
         entity_registry_enabled_default=False,
     ),
-    SE21NumberDescription(
+    SENumberDescription(
         key="param_psetsoft",
         translation_key="target_soft_water_hardness",
         icon="mdi:water-check",
@@ -65,7 +65,7 @@ NUMBERS: tuple[SE21NumberDescription, ...] = (
         mode=NumberMode.BOX,
         entity_registry_enabled_default=False,
     ),
-    SE21NumberDescription(
+    SENumberDescription(
         key="param_prawhard",
         translation_key="raw_water_hardness",
         icon="mdi:water-plus",
@@ -85,22 +85,22 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: GruenbeckSE21Coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GruenbeckSECoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
-        GruenbeckSE21Number(coordinator, entry, desc) for desc in NUMBERS
+        GruenbeckSENumber(coordinator, entry, desc) for desc in NUMBERS
     )
 
 
-class GruenbeckSE21Number(GruenbeckSE21Entity, NumberEntity):
+class GruenbeckSENumber(GruenbeckSEEntity, NumberEntity):
     """A writable numeric parameter as a number entity."""
 
-    entity_description: SE21NumberDescription
+    entity_description: SENumberDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21NumberDescription,
+        description: SENumberDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description

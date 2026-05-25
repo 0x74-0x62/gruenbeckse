@@ -1,4 +1,4 @@
-"""DataUpdateCoordinator for Grünbeck softliQ SE21."""
+"""DataUpdateCoordinator for Grünbeck softliQ SE."""
 from __future__ import annotations
 
 import asyncio
@@ -33,7 +33,7 @@ _PARAM_KEYS = (
 )
 
 
-class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
+class GruenbeckSECoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Coordinator with persistent SignalR connection and SE-native REST polling."""
 
     def __init__(
@@ -190,7 +190,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             raw_update = await self._fetch_update()
             _LOGGER.debug(
-                "SE21 /update: hasError=%s resid1=%s%%  flow1=%s L/min  temp=%s°C",
+                "SE /update: hasError=%s resid1=%s%%  flow1=%s L/min  temp=%s°C",
                 raw_update.get("hasError"),
                 raw_update.get("mresidcap1"),
                 raw_update.get("mflow1"),
@@ -247,7 +247,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
                 aiohttp.http.HTTPStatus.OK,
             ],
         )
-        _LOGGER.debug("SE21 regeneration (boost mode) triggered")
+        _LOGGER.debug("SE regeneration (boost mode) triggered")
 
     async def async_set_parameter(self, key: str, value: Any) -> None:
         """PATCH /parameters with a single {key: value} and refresh."""
@@ -260,7 +260,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             json_data={key: value},
             expected_status_codes=[aiohttp.http.HTTPStatus.OK],
         )
-        _LOGGER.debug("SE21 parameter set: %s = %r", key, value)
+        _LOGGER.debug("SE parameter set: %s = %r", key, value)
         try:
             raw_params = await self._fetch_parameters()
             if self.data:

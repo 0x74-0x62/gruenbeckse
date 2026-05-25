@@ -1,4 +1,4 @@
-"""Button platform for Grünbeck softliQ SE21."""
+"""Button platform for Grünbeck softliQ SE."""
 from __future__ import annotations
 
 import logging
@@ -12,40 +12,40 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
-from .entity import GruenbeckSE21Entity
+from .coordinator import GruenbeckSECoordinator
+from .entity import GruenbeckSEEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class SE21ButtonDescription(ButtonEntityDescription):
+class SEButtonDescription(ButtonEntityDescription):
     """Button description with an async action callable."""
     action_fn: Any = None
 
 
-BUTTONS: tuple[SE21ButtonDescription, ...] = (
-    SE21ButtonDescription(
+BUTTONS: tuple[SEButtonDescription, ...] = (
+    SEButtonDescription(
         key="regenerate",
         translation_key="regenerate",
         icon="mdi:refresh",
         action_fn=lambda c: c.async_regenerate(),
     ),
-    SE21ButtonDescription(
+    SEButtonDescription(
         key="clear_regen_counter",
         translation_key="clear_regen_counter",
         icon="mdi:counter",
         action_fn=lambda c: c.async_set_parameter("pclearcntreg", True),
         entity_registry_enabled_default=False,
     ),
-    SE21ButtonDescription(
+    SEButtonDescription(
         key="clear_water_counter",
         translation_key="clear_water_counter",
         icon="mdi:water-off",
         action_fn=lambda c: c.async_set_parameter("pclearcntwater", True),
         entity_registry_enabled_default=False,
     ),
-    SE21ButtonDescription(
+    SEButtonDescription(
         key="clear_error_memory",
         translation_key="clear_error_memory",
         icon="mdi:alert-remove",
@@ -60,22 +60,22 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: GruenbeckSE21Coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GruenbeckSECoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
-        GruenbeckSE21Button(coordinator, entry, desc) for desc in BUTTONS
+        GruenbeckSEButton(coordinator, entry, desc) for desc in BUTTONS
     )
 
 
-class GruenbeckSE21Button(GruenbeckSE21Entity, ButtonEntity):
-    """A button entity for the Grünbeck softliQ SE21."""
+class GruenbeckSEButton(GruenbeckSEEntity, ButtonEntity):
+    """A button entity for the Grünbeck softliQ SE."""
 
-    entity_description: SE21ButtonDescription
+    entity_description: SEButtonDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21ButtonDescription,
+        description: SEButtonDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description

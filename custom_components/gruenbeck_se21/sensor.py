@@ -1,4 +1,4 @@
-"""Sensors for Grünbeck softliQ SE21."""
+"""Sensors for Grünbeck softliQ SE."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -16,12 +16,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import GruenbeckSE21Coordinator
-from .entity import GruenbeckSE21Entity
+from .coordinator import GruenbeckSECoordinator
+from .entity import GruenbeckSEEntity
 
 
 @dataclass(frozen=True)
-class SE21SensorDescription(SensorEntityDescription):
+class SESensorDescription(SensorEntityDescription):
     """Extends SensorEntityDescription with an optional value transform."""
     value_fn: Any = None
 
@@ -35,9 +35,9 @@ def _clean_temperature(val: Any) -> float | None:
         return None
 
 
-SENSORS: tuple[SE21SensorDescription, ...] = (
+SENSORS: tuple[SESensorDescription, ...] = (
     # ── Measurements from /update ──────────────────────────────────────
-    SE21SensorDescription(
+    SESensorDescription(
         key="soft_water_quantity",
         translation_key="soft_water_quantity",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
@@ -45,13 +45,13 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_display_precision=1,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_counter",
         translation_key="regeneration_counter",
         state_class=SensorStateClass.TOTAL_INCREASING,
         icon="mdi:counter",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="current_flow_rate",
         translation_key="current_flow_rate",
         native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
@@ -59,16 +59,16 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="current_flow_rate_2",
         translation_key="current_flow_rate_2",
         native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
         device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
-        entity_registry_enabled_default=False,  # SE21 single chamber, always 0
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber, always 0
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="blending_flow_rate",
         translation_key="blending_flow_rate",
         native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
@@ -77,7 +77,7 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         suggested_display_precision=2,
         entity_registry_enabled_default=False,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="remaining_capacity_volume",
         translation_key="remaining_capacity_volume",
         native_unit_of_measurement=UnitOfVolume.LITERS,
@@ -85,37 +85,37 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="remaining_capacity_volume_2",
         translation_key="remaining_capacity_volume_2",
         native_unit_of_measurement=UnitOfVolume.LITERS,
         device_class=SensorDeviceClass.VOLUME_STORAGE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
-        entity_registry_enabled_default=False,  # SE21 single chamber
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="remaining_capacity_percentage",
         translation_key="remaining_capacity_percentage",
         native_unit_of_measurement="%",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water-percent",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="remaining_capacity_percentage_2",
         translation_key="remaining_capacity_percentage_2",
         native_unit_of_measurement="%",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water-percent",
-        entity_registry_enabled_default=False,  # SE21 single chamber
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="salt_range",
         translation_key="salt_range",
         icon="mdi:shaker-outline",
         value_fn=lambda v: "low" if v else "ok" if v is not None else None,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="salt_consumption",
         translation_key="salt_consumption",
         native_unit_of_measurement="kg",
@@ -123,14 +123,14 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         icon="mdi:shaker",
         suggested_display_precision=1,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="actual_value_soft_water_hardness",
         translation_key="actual_value_soft_water_hardness",
         native_unit_of_measurement="°dH",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="temperature",
         translation_key="temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -140,7 +140,7 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         entity_registry_enabled_default=False,  # SE18/SE21 lack physical sensor, reports negative sentinel
         value_fn=_clean_temperature,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="flow_rate_peak_value",
         translation_key="flow_rate_peak_value",
         native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
@@ -149,7 +149,7 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         suggested_display_precision=2,
         entity_registry_enabled_default=False,  # not in /update endpoint
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="make_up_water_volume",
         translation_key="make_up_water_volume",
         native_unit_of_measurement=UnitOfVolume.LITERS,
@@ -157,7 +157,7 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         icon="mdi:water-plus",
         suggested_display_precision=0,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="exhausted_percentage",
         translation_key="exhausted_percentage",
         native_unit_of_measurement="%",
@@ -165,54 +165,54 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         icon="mdi:battery-low",
         entity_registry_enabled_default=False,  # not in /update endpoint
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_step",
         translation_key="regeneration_step",
         icon="mdi:refresh",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_step_2",
         translation_key="regeneration_step_2",
         icon="mdi:refresh",
-        entity_registry_enabled_default=False,  # SE21 single chamber
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_percentage_2",
         translation_key="regeneration_percentage_2",
         native_unit_of_measurement="%",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:refresh",
-        entity_registry_enabled_default=False,  # SE21 single chamber
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_flow_rate_2",
         translation_key="regeneration_flow_rate_2",
         native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
         device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
-        entity_registry_enabled_default=False,  # SE21 single chamber
+        entity_registry_enabled_default=False,  # SE18/SE21 single chamber
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_trigger",
         translation_key="regeneration_trigger",
         icon="mdi:refresh-auto",
         entity_registry_enabled_default=False,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="last_regeneration_exchanger",
         translation_key="last_regeneration_exchanger",
         icon="mdi:clock-outline",
         entity_registry_enabled_default=False,  # not in /update endpoint
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="capacity_figure",
         translation_key="capacity_figure",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:gauge",
         suggested_display_precision=1,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="regeneration_remaining_time",
         translation_key="regeneration_remaining_time",
         native_unit_of_measurement="min",
@@ -220,45 +220,45 @@ SENSORS: tuple[SE21SensorDescription, ...] = (
         icon="mdi:timer-outline",
         entity_registry_enabled_default=False,  # not in /update endpoint
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="next_service",
         translation_key="next_service",
         icon="mdi:wrench-clock",
         entity_registry_enabled_default=False,  # not in /update endpoint
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="remaining_amount_of_water",
         translation_key="remaining_amount_of_water",
         native_unit_of_measurement=UnitOfVolume.LITERS,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water",
         suggested_display_precision=0,
-        entity_registry_enabled_default=False,  # SE21 no storage tank, always 0
+        entity_registry_enabled_default=False,  # SE18/SE21 no storage tank, always 0
     ),
     # ── Device info from GET /devices/{id} ────────────────────────────
-    SE21SensorDescription(
+    SESensorDescription(
         key="device_status",
         translation_key="device_status",
         icon="mdi:information-outline",
         entity_registry_enabled_default=False,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="installed_on",
         translation_key="installed_on",
         icon="mdi:calendar",
         entity_registry_enabled_default=False,
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="next_regen_calc",
         translation_key="next_regen_calc",
         icon="mdi:clock-outline",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="active_error_message",
         translation_key="active_error_message",
         icon="mdi:alert-circle-outline",
     ),
-    SE21SensorDescription(
+    SESensorDescription(
         key="active_error_code",
         translation_key="active_error_code",
         icon="mdi:alert-circle-outline",
@@ -272,22 +272,22 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: GruenbeckSE21Coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GruenbeckSECoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
-        GruenbeckSE21Sensor(coordinator, entry, desc) for desc in SENSORS
+        GruenbeckSESensor(coordinator, entry, desc) for desc in SENSORS
     )
 
 
-class GruenbeckSE21Sensor(GruenbeckSE21Entity, SensorEntity):
-    """A sensor entity for the Grünbeck softliQ SE21."""
+class GruenbeckSESensor(GruenbeckSEEntity, SensorEntity):
+    """A sensor entity for the Grünbeck softliQ SE."""
 
-    entity_description: SE21SensorDescription
+    entity_description: SESensorDescription
 
     def __init__(
         self,
-        coordinator: GruenbeckSE21Coordinator,
+        coordinator: GruenbeckSECoordinator,
         entry: ConfigEntry,
-        description: SE21SensorDescription,
+        description: SESensorDescription,
     ) -> None:
         super().__init__(coordinator, entry, description.key)
         self.entity_description = description

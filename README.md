@@ -1,4 +1,4 @@
-# Grünbeck softliQ SE18/SE21 — Home Assistant Integration
+# Grünbeck softliQ SE Series (SE18/SE21/SE24) — Home Assistant Integration
 
 > **⚠️ Disclaimer**
 >
@@ -17,13 +17,13 @@
 
 ---
 
-A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21)** water softeners, connecting via the Grünbeck Cloud API with real-time SignalR push updates.
+A custom Home Assistant integration for the **Grünbeck softliQ SE series (SE18, SE21, SE24)** water softeners, connecting via the Grünbeck Cloud API with real-time push updates.
 
 ---
 
 ## Differences from hagruenbeck_cloud
 
-This integration was built from scratch to support the **SE series** (softliQ SE18/SE21). It uses [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) and [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud) by [@p0l0](https://github.com/p0l0) as a reference and reuses the `pygruenbeck_cloud` library for authentication and SignalR — but diverges significantly in the following areas:
+This integration was built from scratch to support the **SE series** (softliQ SE18/SE21/SE24). It uses [hagruenbeck_cloud](https://github.com/p0l0/hagruenbeck_cloud) and [pygruenbeck_cloud](https://github.com/p0l0/pygruenbeck_cloud) by [@p0l0](https://github.com/p0l0) as a reference and reuses the `pygruenbeck_cloud` library for authentication — but diverges significantly in the following areas:
 
 ### 1. Target device: SE series vs. SD series
 
@@ -31,7 +31,7 @@ This integration was built from scratch to support the **SE series** (softliQ SE
 
 ### 2. Different measurement endpoint
 
-| | hagruenbeck_cloud (SD) | This integration (SE21) |
+| | hagruenbeck_cloud (SD) | This integration (SE) |
 |---|---|---|
 | Measurement data | `GET /salt` | `GET /update` |
 | Response fields | SD-specific model | `mtemp`, `mrescapa1`, `mlime`, `msaltrange`, … |
@@ -40,7 +40,7 @@ The library's `get_device_salt_measurements()` method returns incomplete or brok
 
 ### 3. Different regeneration command
 
-| | hagruenbeck_cloud (SD) | This integration (SE21) |
+| | hagruenbeck_cloud (SD) | This integration (SE) |
 |---|---|---|
 | Trigger regeneration | `POST /regenerate` → 404 on SE | `POST /activate-boost-mode` → 200 OK |
 
@@ -59,7 +59,7 @@ The library's `set_device_from_id()` / `get_device_infos()` call fails on SE dev
 - **Sensor "Aktuelle Fehlermeldung"** — text of the most recent active error
 - **Sensor "Aktueller Fehlercode"** — numeric code of the most recent active error
 
-Note: `msaltrange` in `/update` does **not** reliably reflect the salt warning state on SE21 hardware. The `errors[]` array is the authoritative source.
+Note: `msaltrange` in `/update` does **not** reliably reflect the salt warning state on SE hardware. The `errors[]` array is the authoritative source.
 
 ### 6. Temperature sensor
 
@@ -69,11 +69,11 @@ The SE series API reports water temperature as `mtemp` in the `/update` response
 
 The SE18 and SE21 are single-chamber devices. Fields for exchanger 2 (`mRescapa2`, `mresidcap2`, `mstep2`, `mregpercent2`, `mflowreg2`) exist in the API response but are always 0. Corresponding entities are created but **disabled by default**.
 
-The SE series uses an internal turbine-based water meter/pulse generator to track consumption and calculate real-time flow rate (`mflow1`). The **Durchfluss** (flow rate) sensor is enabled by default to show live flow rate updates pushed dynamically via WebSockets when water is running.
+The SE series uses an internal turbine-based water meter/pulse generator to track consumption and calculate real-time flow rate (`mflow1`). The **Durchfluss** (flow rate) sensor is enabled by default to show flow rate updates fetched during the update interval.
 
 ### 8. Direct REST calls instead of library abstraction
 
-Rather than mapping SE data through the library's SD-oriented model, this integration calls the REST API directly using the library only for authentication (`_get_web_access_token()`) and SignalR transport (`connect()` / `listen()` / `disconnect()`).
+Rather than mapping SE data through the library's SD-oriented model, this integration calls the REST API directly using the library for authentication (`_get_web_access_token()`) and making the 5-step HTTP update calls.
 
 ---
 
@@ -81,8 +81,9 @@ Rather than mapping SE data through the library's SD-oriented model, this integr
 
 - Grünbeck **softliQ SE18**
 - Grünbeck **softliQ SE21**
+- Grünbeck **softliQ SE24**
 
-Other SE series devices (like the SE24 or SE26) may work but have not been fully tested.
+Other SE series devices may work but have not been fully tested.
 
 ---
 
@@ -142,15 +143,15 @@ Other SE series devices (like the SE24 or SE26) may work but have not been fully
 
 - Home Assistant 2023.x or newer
 - `pygruenbeck_cloud==1.3.3`
-- A Grünbeck Cloud account with an SE18 or SE21 device registered
+- A Grünbeck Cloud account with an SE series device registered
 
 ---
 
 ## Installation
 
-1. Copy the `custom_components/gruenbeck_se21` folder into your HA `config/custom_components/` directory.
+1. Copy the `custom_components/gruenbeck_se` folder into your HA `config/custom_components/` directory.
 2. Restart Home Assistant.
-3. Go to **Settings → Devices & Services → Add Integration** and search for **Grünbeck SE21**.
+3. Go to **Settings → Devices & Services → Add Integration** and search for **Grünbeck SE**.
 4. Enter your Grünbeck Cloud credentials (e-mail and password).
 
 ---

@@ -1,9 +1,9 @@
 {
-  "domain": "gruenbeck_se21",
-  "name": "Grünbeck softliQ SE21",
+  "domain": "gruenbeck_se",
+  "name": "Grünbeck softliQ SE",
   "version": "0.1.0",
-  "documentation": "https://github.com/bernd780/gruenbeckse21",
-  "issue_tracker": "https://github.com/bernd780/gruenbeckse21/issues",
+  "documentation": "https://github.com/bernd780/gruenbeckse",
+  "issue_tracker": "https://github.com/bernd780/gruenbeckse/issues",
   "requirements": ["pygruenbeck_cloud==1.3.3"],
   "dependencies": [],
   "codeowners": ["@bernd780"],

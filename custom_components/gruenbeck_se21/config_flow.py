@@ -1,4 +1,4 @@
-"""Config flow for Grünbeck softliQ SE21."""
+"""Config flow for Grünbeck softliQ SE."""
 from __future__ import annotations
 
 import logging
@@ -39,7 +39,7 @@ async def _get_se_devices(hass: HomeAssistant, username: str, password: str) -> 
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Grünbeck SE21."""
+    """Config flow for Grünbeck SE."""
 
     VERSION = 1
     _devices: list = []
