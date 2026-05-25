@@ -1,6 +1,7 @@
 """DataUpdateCoordinator for Grünbeck softliQ SE21."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 from typing import Any
@@ -12,7 +13,7 @@ from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import CONF_DEVICE_ID, DOMAIN, SCAN_INTERVAL_MINUTES
+from .const import DOMAIN, SCAN_INTERVAL_MINUTES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,6 +55,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._device_id = device_id
         self.api: Any = None
         self._unsub_stop: Any = None
+        self._ws_task: asyncio.Task[None] | None = None
 
     # ------------------------------------------------------------------
     # API helpers
@@ -153,6 +155,11 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER.debug("SignalR listen ended: %s", exc)
         finally:
             await self.api.disconnect()
+            # Workaround for upstream pygruenbeck_cloud reuse-after-close bug
+            if hasattr(self.api, "_ws_session"):
+                self.api._ws_session = None
+            if hasattr(self.api, "_ws_client"):
+                self.api._ws_client = None
             if self._unsub_stop:
                 self._unsub_stop()
                 self._unsub_stop = None
@@ -182,7 +189,7 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
                 await self._init_api()
 
             if not self.api.connected and self._unsub_stop is None:
-                self.hass.async_create_background_task(
+                self._ws_task = self.hass.async_create_background_task(
                     self._listen_websocket(),
                     "gruenbeck_se21_ws",
                 )
@@ -218,6 +225,21 @@ class GruenbeckSE21Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise
         except Exception as exc:
             raise UpdateFailed(f"Error communicating with Grünbeck Cloud: {exc}") from exc
+
+    async def async_shutdown(self) -> None:
+        """Cancel any active tasks or connections when shutting down."""
+        if self._ws_task:
+            self._ws_task.cancel()
+            self._ws_task = None
+        if self._unsub_stop:
+            self._unsub_stop()
+            self._unsub_stop = None
+        if self.api and self.api.connected:
+            try:
+                await self.api.disconnect()
+            except Exception as exc:
+                _LOGGER.debug("Error disconnecting during shutdown: %s", exc)
+        await super().async_shutdown()
 
     # ------------------------------------------------------------------
     # Actions

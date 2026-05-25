@@ -2,108 +2,108 @@
   "config": {
     "step": {
       "user": {
-        "title": "Grünbeck Cloud Zugangsdaten",
+        "title": "Grünbeck Cloud credentials",
         "data": {
-          "username": "E-Mail",
-          "password": "Passwort"
+          "username": "E-mail",
+          "password": "Password"
         }
       },
       "select_device": {
-        "title": "Gerät auswählen",
+        "title": "Select device",
         "data": {
-          "device_id": "Gerät"
+          "device_id": "Device"
         }
       }
     },
     "error": {
-      "cannot_connect": "Verbindung zur Grünbeck Cloud fehlgeschlagen",
-      "no_devices": "Kein SE-Gerät im Konto gefunden",
-      "unknown": "Unbekannter Fehler"
+      "cannot_connect": "Failed to connect to Grünbeck Cloud",
+      "no_devices": "No SE device found in account",
+      "unknown": "Unknown error"
     },
     "abort": {
-      "already_configured": "Dieses Gerät ist bereits eingerichtet"
+      "already_configured": "This device is already configured"
     }
   },
   "entity": {
     "sensor": {
-      "soft_water_quantity":              {"name": "Weichwasser gesamt"},
-      "regeneration_counter":             {"name": "Regenerationen"},
-      "current_flow_rate":                {"name": "Durchfluss"},
-      "current_flow_rate_2":              {"name": "Durchfluss 2"},
-      "blending_flow_rate":               {"name": "Mischwasser-Durchfluss"},
-      "remaining_capacity_volume":        {"name": "Verbleibende Kapazität"},
-      "remaining_capacity_volume_2":      {"name": "Verbleibende Kapazität 2"},
-      "remaining_capacity_percentage":    {"name": "Kapazität"},
-      "remaining_capacity_percentage_2":  {"name": "Kapazität 2"},
-      "salt_range":                       {"name": "Salzreichweite"},
-      "salt_consumption":                 {"name": "Salzverbrauch"},
-      "actual_value_soft_water_hardness": {"name": "Wasserhärte"},
-      "temperature":                      {"name": "Temperatur"},
-      "flow_rate_peak_value":             {"name": "Spitzendurchfluss"},
-      "make_up_water_volume":             {"name": "Nachfüllwasser"},
-      "exhausted_percentage":             {"name": "Erschöpfung"},
-      "regeneration_step":                {"name": "Regenerationsschritt"},
-      "regeneration_step_2":              {"name": "Regenerationsschritt 2"},
+      "soft_water_quantity":              {"name": "Soft water total"},
+      "regeneration_counter":             {"name": "Regenerations"},
+      "current_flow_rate":                {"name": "Flow rate"},
+      "current_flow_rate_2":              {"name": "Flow rate 2"},
+      "blending_flow_rate":               {"name": "Blending flow rate"},
+      "remaining_capacity_volume":        {"name": "Remaining capacity"},
+      "remaining_capacity_volume_2":      {"name": "Remaining capacity 2"},
+      "remaining_capacity_percentage":    {"name": "Capacity"},
+      "remaining_capacity_percentage_2":  {"name": "Capacity 2"},
+      "salt_range":                       {"name": "Salt reach"},
+      "salt_consumption":                 {"name": "Salt consumption"},
+      "actual_value_soft_water_hardness": {"name": "Water hardness"},
+      "temperature":                      {"name": "Temperature"},
+      "flow_rate_peak_value":             {"name": "Peak flow rate"},
+      "make_up_water_volume":             {"name": "Make-up water"},
+      "exhausted_percentage":             {"name": "Exhausted"},
+      "regeneration_step":                {"name": "Regeneration step"},
+      "regeneration_step_2":              {"name": "Regeneration step 2"},
       "regeneration_percentage_2":        {"name": "Regeneration % 2"},
-      "regeneration_flow_rate_2":         {"name": "Regenerationsdurchfluss 2"},
-      "regeneration_trigger":             {"name": "Regenerationsauslöser"},
-      "last_regeneration_exchanger":      {"name": "Letzte Regeneration"},
-      "capacity_figure":                  {"name": "Kapazitätswert"},
-      "regeneration_remaining_time":      {"name": "Verbleibende Regenerationszeit"},
-      "next_service":                     {"name": "Nächste Wartung"},
-      "remaining_amount_of_water":        {"name": "Verbleibendes Wasser"},
-      "device_status":                    {"name": "Gerätestatus"},
-      "installed_on":                     {"name": "Installiert am"},
-      "next_regen_calc":                  {"name": "Nächste Regeneration"},
-      "active_error_message":             {"name": "Aktuelle Fehlermeldung"},
-      "active_error_code":                {"name": "Aktueller Fehlercode"}
+      "regeneration_flow_rate_2":         {"name": "Regeneration flow rate 2"},
+      "regeneration_trigger":             {"name": "Regeneration trigger"},
+      "last_regeneration_exchanger":      {"name": "Last regeneration"},
+      "capacity_figure":                  {"name": "Capacity figure"},
+      "regeneration_remaining_time":      {"name": "Regeneration remaining time"},
+      "next_service":                     {"name": "Next service"},
+      "remaining_amount_of_water":        {"name": "Remaining water"},
+      "device_status":                    {"name": "Device status"},
+      "installed_on":                     {"name": "Installed on"},
+      "next_regen_calc":                  {"name": "Next regeneration"},
+      "active_error_message":             {"name": "Active error message"},
+      "active_error_code":                {"name": "Active error code"}
     },
     "binary_sensor": {
-      "has_error": {"name": "Gerätestörung"},
-      "low_salt":  {"name": "Salzvorrat gering"}
+      "has_error": {"name": "Device error"},
+      "low_salt":  {"name": "Salt level low"}
     },
     "button": {
-      "regenerate":          {"name": "Regeneration starten"},
-      "clear_regen_counter": {"name": "Regenerationszähler zurücksetzen"},
-      "clear_water_counter": {"name": "Wasserzähler zurücksetzen"},
-      "clear_error_memory":  {"name": "Fehlerspeicher löschen"}
+      "regenerate":          {"name": "Start regeneration"},
+      "clear_regen_counter": {"name": "Reset regeneration counter"},
+      "clear_water_counter": {"name": "Reset water counter"},
+      "clear_error_memory":  {"name": "Clear error memory"}
     },
     "switch": {
-      "regeneration_mode": {"name": "Manueller Regenerationsmodus"},
-      "buzzer":            {"name": "Signalton"},
-      "led_stoerung":      {"name": "LED Störung"},
-      "led_meldung":       {"name": "LED Meldung"},
-      "led_durchfluss":    {"name": "LED Durchfluss"},
-      "led_dauerhaft":     {"name": "LED Dauerhaft"}
+      "regeneration_mode": {"name": "Manual regeneration mode"},
+      "buzzer":            {"name": "Buzzer"},
+      "led_stoerung":      {"name": "LED fault"},
+      "led_meldung":       {"name": "LED notice"},
+      "led_durchfluss":    {"name": "LED flow"},
+      "led_dauerhaft":     {"name": "LED permanent"}
     },
     "number": {
-      "led_mode":                    {"name": "LED-Modus"},
-      "led_brightness":              {"name": "LED-Helligkeit"},
-      "target_soft_water_hardness":  {"name": "Weichwasser-Sollwert"},
-      "raw_water_hardness":          {"name": "Rohwasserhärte"}
+      "led_mode":                    {"name": "LED mode"},
+      "led_brightness":              {"name": "LED brightness"},
+      "target_soft_water_hardness":  {"name": "Target soft water hardness"},
+      "raw_water_hardness":          {"name": "Raw water hardness"}
     },
     "time": {
-      "regen_time_su_1": {"name": "Regenerationszeit So. 1"},
-      "regen_time_su_2": {"name": "Regenerationszeit So. 2"},
-      "regen_time_su_3": {"name": "Regenerationszeit So. 3"},
-      "regen_time_mo_1": {"name": "Regenerationszeit Mo. 1"},
-      "regen_time_mo_2": {"name": "Regenerationszeit Mo. 2"},
-      "regen_time_mo_3": {"name": "Regenerationszeit Mo. 3"},
-      "regen_time_di_1": {"name": "Regenerationszeit Di. 1"},
-      "regen_time_di_2": {"name": "Regenerationszeit Di. 2"},
-      "regen_time_di_3": {"name": "Regenerationszeit Di. 3"},
-      "regen_time_mi_1": {"name": "Regenerationszeit Mi. 1"},
-      "regen_time_mi_2": {"name": "Regenerationszeit Mi. 2"},
-      "regen_time_mi_3": {"name": "Regenerationszeit Mi. 3"},
-      "regen_time_do_1": {"name": "Regenerationszeit Do. 1"},
-      "regen_time_do_2": {"name": "Regenerationszeit Do. 2"},
-      "regen_time_do_3": {"name": "Regenerationszeit Do. 3"},
-      "regen_time_fr_1": {"name": "Regenerationszeit Fr. 1"},
-      "regen_time_fr_2": {"name": "Regenerationszeit Fr. 2"},
-      "regen_time_fr_3": {"name": "Regenerationszeit Fr. 3"},
-      "regen_time_sa_1": {"name": "Regenerationszeit Sa. 1"},
-      "regen_time_sa_2": {"name": "Regenerationszeit Sa. 2"},
-      "regen_time_sa_3": {"name": "Regenerationszeit Sa. 3"}
+      "regen_time_su_1": {"name": "Regen. time Sun. 1"},
+      "regen_time_su_2": {"name": "Regen. time Sun. 2"},
+      "regen_time_su_3": {"name": "Regen. time Sun. 3"},
+      "regen_time_mo_1": {"name": "Regen. time Mon. 1"},
+      "regen_time_mo_2": {"name": "Regen. time Mon. 2"},
+      "regen_time_mo_3": {"name": "Regen. time Mon. 3"},
+      "regen_time_di_1": {"name": "Regen. time Tue. 1"},
+      "regen_time_di_2": {"name": "Regen. time Tue. 2"},
+      "regen_time_di_3": {"name": "Regen. time Tue. 3"},
+      "regen_time_mi_1": {"name": "Regen. time Wed. 1"},
+      "regen_time_mi_2": {"name": "Regen. time Wed. 2"},
+      "regen_time_mi_3": {"name": "Regen. time Wed. 3"},
+      "regen_time_do_1": {"name": "Regen. time Thu. 1"},
+      "regen_time_do_2": {"name": "Regen. time Thu. 2"},
+      "regen_time_do_3": {"name": "Regen. time Thu. 3"},
+      "regen_time_fr_1": {"name": "Regen. time Fri. 1"},
+      "regen_time_fr_2": {"name": "Regen. time Fri. 2"},
+      "regen_time_fr_3": {"name": "Regen. time Fri. 3"},
+      "regen_time_sa_1": {"name": "Regen. time Sat. 1"},
+      "regen_time_sa_2": {"name": "Regen. time Sat. 2"},
+      "regen_time_sa_3": {"name": "Regen. time Sat. 3"}
     }
   }
 }

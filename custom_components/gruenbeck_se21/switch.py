@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
 from .coordinator import GruenbeckSE21Coordinator
@@ -121,6 +122,9 @@ class GruenbeckSE21Switch(GruenbeckSE21Entity, SwitchEntity):
             )
         except Exception as exc:
             _LOGGER.error("Failed to turn on %s: %s", self.entity_description.key, exc)
+            raise HomeAssistantError(
+                f"Failed to turn on {self.entity_description.name or self.entity_description.key}: {exc}"
+            ) from exc
 
     async def async_turn_off(self, **kwargs: object) -> None:
         try:
@@ -129,6 +133,9 @@ class GruenbeckSE21Switch(GruenbeckSE21Entity, SwitchEntity):
             )
         except Exception as exc:
             _LOGGER.error("Failed to turn off %s: %s", self.entity_description.key, exc)
+            raise HomeAssistantError(
+                f"Failed to turn off {self.entity_description.name or self.entity_description.key}: {exc}"
+            ) from exc
 
 
 class GruenbeckSE21LedSwitch(GruenbeckSE21Entity, SwitchEntity):
@@ -195,9 +202,15 @@ class GruenbeckSE21LedSwitch(GruenbeckSE21Entity, SwitchEntity):
             await self._set_led(True)
         except Exception as exc:
             _LOGGER.error("Failed to turn on LED %s: %s", self.entity_description.key, exc)
+            raise HomeAssistantError(
+                f"Failed to turn on LED {self.entity_description.name or self.entity_description.key}: {exc}"
+            ) from exc
 
     async def async_turn_off(self, **kwargs: object) -> None:
         try:
             await self._set_led(False)
         except Exception as exc:
             _LOGGER.error("Failed to turn off LED %s: %s", self.entity_description.key, exc)
+            raise HomeAssistantError(
+                f"Failed to turn off LED {self.entity_description.name or self.entity_description.key}: {exc}"
+            ) from exc

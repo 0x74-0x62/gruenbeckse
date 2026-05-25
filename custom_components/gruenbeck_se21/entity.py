@@ -21,7 +21,7 @@ class GruenbeckSE21Entity(CoordinatorEntity[GruenbeckSE21Coordinator]):
         unique_suffix: str,
     ) -> None:
         super().__init__(coordinator)
-        self._attr_unique_id = f"{entry.entry_id}_{unique_suffix}"
+        self._attr_unique_id = f"{entry.unique_id}_{unique_suffix}"
         self._entry = entry
 
     @property

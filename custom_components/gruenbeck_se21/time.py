@@ -10,6 +10,7 @@ from homeassistant.components.time import TimeEntity, TimeEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
 from .coordinator import GruenbeckSE21Coordinator
@@ -77,6 +78,8 @@ class GruenbeckSE21Time(GruenbeckSE21Entity, TimeEntity):
     @property
     def native_value(self) -> dt_time | None:
         raw = (self.coordinator.data or {}).get(self.entity_description.key)
+        if isinstance(raw, dt_time):
+            return raw
         if not raw:
             return None
         m = _TIME_RE.match(str(raw))
@@ -94,3 +97,6 @@ class GruenbeckSE21Time(GruenbeckSE21Entity, TimeEntity):
             _LOGGER.error(
                 "Failed to set %s to %s: %s", self.entity_description.key, time_str, exc
             )
+            raise HomeAssistantError(
+                f"Failed to set {self.entity_description.name or self.entity_description.key} to {time_str}: {exc}"
+            ) from exc

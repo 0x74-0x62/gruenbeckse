@@ -9,6 +9,7 @@ from homeassistant.components.button import ButtonEntity, ButtonEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
 from .coordinator import GruenbeckSE21Coordinator
@@ -84,3 +85,6 @@ class GruenbeckSE21Button(GruenbeckSE21Entity, ButtonEntity):
             await self.entity_description.action_fn(self.coordinator)
         except Exception as exc:
             _LOGGER.error("Button %s failed: %s", self.entity_description.key, exc)
+            raise HomeAssistantError(
+                f"Failed to trigger {self.entity_description.name or self.entity_description.key}: {exc}"
+            ) from exc

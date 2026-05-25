@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from homeassistant.components.number import (
     NumberEntity,
@@ -12,6 +12,7 @@ from homeassistant.components.number import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN
 from .coordinator import GruenbeckSE21Coordinator
@@ -125,3 +126,6 @@ class GruenbeckSE21Number(GruenbeckSE21Entity, NumberEntity):
             _LOGGER.error(
                 "Failed to set %s to %r: %s", self.entity_description.key, api_val, exc
             )
+            raise HomeAssistantError(
+                f"Failed to set {self.entity_description.name or self.entity_description.key} to {api_val}: {exc}"
+            ) from exc
